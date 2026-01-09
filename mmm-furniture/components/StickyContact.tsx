@@ -2,9 +2,15 @@
 
 import { useEffect, useRef, useState } from "react";
 
+type FormErrors = {
+  name?: string;
+  email?: string;
+  phone?: string;
+  message?: string;
+};
+
 export default function StickyContact() {
   const [open, setOpen] = useState(false);
-
   const firstInputRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState({
@@ -14,41 +20,43 @@ export default function StickyContact() {
     message: "",
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [errors, setErrors] = useState<any>({});
+  const [errors, setErrors] = useState<FormErrors>({});
 
   useEffect(() => {
     if (open && firstInputRef.current) {
-      firstInputRef.current.focus(); // 🔥 Auto focus
+      firstInputRef.current.focus();
     }
   }, [open]);
 
+  // 🔹 Validation
   const validate = () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const e: any = {};
+    const e: FormErrors = {};
 
-    if (!form.name.trim()) e.name = "Name required";
-    if (!/\S+@\S+\.\S+/.test(form.email)) e.email = "Invalid email";
-    if (!/^[6-9]\d{9}$/.test(form.phone))
-      e.phone = "Enter valid 10-digit phone";
-    if (!form.message.trim()) e.message = "Message required";
+    if (!form.name.trim()) e.name = "Name is required";
+
+    if (!form.email.trim()) {
+      e.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(form.email)) {
+      e.email = "Enter a valid email address";
+    }
+
+    if (!form.phone.trim()) {
+      e.phone = "Phone number is required";
+    } else if (!/^[6-9]\d{9}$/.test(form.phone)) {
+      e.phone = "Enter a valid 10-digit mobile number";
+    }
+
+    if (!form.message.trim()) e.message = "Message is required";
 
     setErrors(e);
     return Object.keys(e).length === 0;
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  // const handleSubmit = (e: any) => {
-  //   e.preventDefault();
-  //   if (!validate()) return;
-
-  //   alert("Thank you! We will contact you shortly.");
-  //   setForm({ name: "", email: "", phone: "", message: "" });
-  //   setOpen(false);
-  // };
-const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  // 🔹 Submit
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-  //  setSubmitting(true);
+
+    if (!validate()) return;
 
     try {
       const response = await fetch("/api/send-email", {
@@ -58,39 +66,26 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       });
 
       if (response.ok) {
-        // toast.current?.show({
-        //   severity: "success",
-        //   summary: "Success",
-        //   detail: "Message sent successfully! We'll get back to you soon.",
-        //   life: 5000,
-        // });
-        setForm({ name: "", phone: "", email: "", message: "" });
+        alert("Message sent successfully!");
+        setForm({ name: "", email: "", phone: "", message: "" });
+        setErrors({});
+        setOpen(false);
       } else {
-        // toast.current?.show({
-        //   severity: "error",
-        //   summary: "Error",
-        //   detail: "Failed to send message. Please try again.",
-        //   life: 5000,
-        // });
+        alert("Failed to send message. Try again.");
       }
-    } catch (error) {
-      // toast.current?.show({
-      //   severity: "error",
-      //   summary: "Network Error",
-      //   detail: "Please check your connection and try again.",
-      //   life: 5000,
-      // });
-    } finally {
+    } catch {
+      alert("Network error. Please try again.");
     }
   };
+
   return (
     <>
-      {/* FLOATING BUTTON */}
+      {/* Floating Button */}
       <div className="sticky-chat-btn" onClick={() => setOpen(true)}>
         💬
       </div>
 
-      {/* POPUP */}
+      {/* Popup */}
       {open && (
         <div className="contact-modal-overlay" onClick={() => setOpen(false)}>
           <div
@@ -106,47 +101,77 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
             </h5>
 
             <form onSubmit={handleSubmit}>
+              {/* Name */}
               <input
                 ref={firstInputRef}
-                className="form-control fancy-input"
+                type="text"
+                className={`form-control fancy-input ${
+                  errors.name ? "is-invalid" : ""
+                }`}
                 placeholder="Your Name"
                 value={form.name}
-                onChange={(e) =>
-                  setForm({ ...form, name: e.target.value })
-                }
+                onChange={(e) => {
+                  setForm({ ...form, name: e.target.value });
+                  setErrors({ ...errors, name: "" });
+                }}
               />
-              {errors.name && <small>{errors.name}</small>}
+              {errors.name && (
+                <small className="text-danger">{errors.name}</small>
+              )}
 
+              {/* Email */}
               <input
-                className="form-control fancy-input"
+                type="email"
+                className={`form-control fancy-input ${
+                  errors.email ? "is-invalid" : ""
+                }`}
                 placeholder="Email Address"
                 value={form.email}
-                onChange={(e) =>
-                  setForm({ ...form, email: e.target.value })
-                }
+                onChange={(e) => {
+                  setForm({ ...form, email: e.target.value });
+                  setErrors({ ...errors, email: "" });
+                }}
               />
-              {errors.email && <small>{errors.email}</small>}
+              {errors.email && (
+                <small className="text-danger">{errors.email}</small>
+              )}
 
+              {/* Phone */}
               <input
-                className="form-control fancy-input"
-                placeholder="phone Number"
+                type="tel"
+                maxLength={10}
+                inputMode="numeric"
+                className={`form-control fancy-input ${
+                  errors.phone ? "is-invalid" : ""
+                }`}
+                placeholder="Phone Number"
                 value={form.phone}
-                onChange={(e) =>
-                  setForm({ ...form, phone: e.target.value })
-                }
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, "");
+                  setForm({ ...form, phone: value });
+                  setErrors({ ...errors, phone: "" });
+                }}
               />
-              {errors.phone && <small>{errors.phone}</small>}
+              {errors.phone && (
+                <small className="text-danger">{errors.phone}</small>
+              )}
 
+              {/* Message */}
               <textarea
-                className="form-control fancy-input"
+                className={`form-control fancy-input ${
+                  errors.message ? "is-invalid" : ""
+                }`}
                 rows={3}
                 placeholder="Your Message"
                 value={form.message}
-                onChange={(e) =>
-                  setForm({ ...form, message: e.target.value })
-                }
+                onChange={(e) => {
+                  setForm({ ...form, message: e.target.value });
+                  setErrors({ ...errors, message: "" });
+                }}
               />
-              {errors.message && <small>{errors.message}</small>}
+              {errors.message && (
+                <small className="text-danger">{errors.message}</small>
+              )}
 
               <button className="btn btn-danger w-100 mt-3 fancy-btn">
                 Send Message
@@ -154,14 +179,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
             </form>
           </div>
         </div>
-
-
-
-
-
-
       )}
     </>
   );
 }
-

@@ -154,6 +154,9 @@ export default function HomePage() {
               <div key={i} className="col-md-3">
                 <h2>{s.value}</h2>
                 <p>{s.label}</p>
+
+
+                
               </div>
             ))}
           </div>
@@ -204,7 +207,122 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* VISIT US */}
+<section className="visit-us-section py-5">
+  <div className="container">
+    <div className="row align-items-center g-5">
       
+      
+      
+      
+      
+      {/* LEFT IMAGE */}
+      <div className="col-md-6">
+        <div className="visit-image"></div>
+      </div>
+
+
+
+
+      {/* RIGHT CONTENT */}
+      <div className="col-md-6">
+        <h2 className="fw-bold mb-3">Visit Us</h2>
+        <p className="text-muted mb-4">
+          Experience premium wooden furniture and interior craftsmanship in
+          person. Our showroom is open all days, including Sunday.
+        </p>
+
+        <div className="visit-info mb-3">
+          <h6 className="fw-bold">📍 Location</h6>
+          <p>M.M.M Furniture Interior Decor</p>
+        </div>
+
+
+
+{/* CONNECT WITH US */}
+<section className="connect-section py-5">
+  <div className="container">
+    <div className="row align-items-center g-5">
+
+      {/* IMAGE */}
+     <div className="col-lg-6">
+        <div className="static-location-image"></div>
+      </div>
+
+
+
+
+      {/* CONTENT */}
+      <div className="col-lg-6">
+        <h2 className="fw-bold mb-3">Connect With M.M.M Furniture</h2>
+        <p className="text-muted mb-4">
+          Discover premium furniture craftsmanship by visiting our showroom
+          or connecting with us online. We are available every day, including Sundays,
+          to assist you with personalized interior solutions.
+        </p>
+
+        {/* LOCATION */}
+         <div className="connect-box">
+       <h6>📍 Showroom Location</h6>
+        <p>
+       <a
+        href="https://www.google.com/maps/search/?api=1&query=MMM+Furniture+GR+Nagar+K+Pudur+Madurai"
+       target="_blank"
+       rel="noopener noreferrer"
+       className="location-link"
+       >
+          M.M.M Furniture,<br />
+        GR Nagar, 3rd Street, 1st Cross,<br />
+         K. Pudur, Madurai – 625007,<br />
+        Tamil Nadu, India
+       </a>
+        </p>
+ </div>
+
+
+
+        {/* TIME */}
+        <div className="connect-box">
+          <h6>⏰ Working Hours</h6>
+          <p>
+            Monday – Sunday: <strong>9:00 AM – 8:00 PM</strong><br />
+            <span className="open-badge">Sunday Open</span>
+          </p>
+        </div>
+
+        {/* CONTACT */}
+        <div className="connect-box">
+          <h6>📞 Contact Us</h6>
+
+          <p>
+            📱 <a href="tel:+918681897335">+91 86818 97335</a><br />
+            📱 <a href="tel:+916384169175">+91 63841 69175</a>
+          </p>
+
+          <p>
+            ✉️ <a href="mailto:madeshkumarmano@gmail.com">madeshkumarmano@gmail.com</a><br />
+            ✉️ <a href="mailto:mmminteriors@gmail.com">manoharan868189@gmail.com</a>
+          </p>
+        </div>
+
+
+
+      </div>
+       </div>
+     </div>
+     </section>
+
+
+
+
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+
     </>
   );
 }
